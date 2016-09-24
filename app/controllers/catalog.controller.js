@@ -29,8 +29,8 @@ module.exports.getOneById = (req, res, next) => {
 // Create new object
 module.exports.createObject = (req, res, next) => {
   const newObject = new Model({
-    nameCatalog: req.body.nameCatalog,
-    dataCatalog: req.body.dataCatalog
+    type: req.body.type,
+    description: req.body.description
   });
 
   Model.createObject(newObject, (err, object)=>{
@@ -55,8 +55,8 @@ module.exports.removeObject = (req, res, next) => {
 // Update object
 module.exports.updateObject = (req, res, next) => {
   const data = {
-    nameCatalog: req.body.nameCatalog,
-    dataCatalog: req.body.dataCatalog
+    type: req.body.type,
+    description: req.body.description
   };
 
   Model.updateObject(req.params.id, data, (err, object)=>{

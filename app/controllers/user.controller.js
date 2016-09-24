@@ -30,8 +30,6 @@ module.exports.getOneById = (req, res, next) => {
 module.exports.createObject = (req, res, next) => {
   const newObject = new Model({
     username: req.body.username,
-    password: req.body.password,
-    createdDt: req.body.createdDt,
     roles: req.body.roles,
     name: req.body.name,
     lastname: req.body.lastname,
@@ -61,8 +59,6 @@ module.exports.removeObject = (req, res, next) => {
 module.exports.updateObject = (req, res, next) => {
   const data = {
     username: req.body.username,
-    password: req.body.password,
-    createdDt: req.body.createdDt,
     roles: req.body.roles,
     name: req.body.name,
     lastname: req.body.lastname,

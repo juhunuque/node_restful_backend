@@ -1,26 +1,27 @@
 'use strict';
 const mongoose = require('mongoose');
 
-const catalogSchema = mongoose.Schema({
-  nameCatalog:{
+const typeMaterialSchema = mongoose.Schema({
+  type:{
     type: String,
-    default: ""
+    default: ''
   },
-  dataCatalog:{
+  description:{
     type: String,
+    default:''
   }
 });
 
-const Catalog = module.exports = mongoose.model('Catalog', catalogSchema);
+const TypeMaterial = module.exports = mongoose.model('TypeMaterial', typeMaterialSchema);
 
 //Get All
 module.exports.getAll = (callback) => {
-  Catalog.find(callback).sort({_id: -1});
+  TypeMaterial.find(callback).sort({_id: -1});
 };
 
 //Get by ID
 module.exports.getById = (id, callback) => {
-  Catalog.findById(id, callback);
+  TypeMaterial.findById(id, callback);
 };
 
 //Add Object
@@ -30,17 +31,17 @@ module.exports.createObject = (newObject, callback) => {
 
 //Remove Object
 module.exports.removeObject = (id, callback) => {
-  Catalog.find({_id: id}).remove(callback);
+  TypeMaterial.find({_id: id}).remove(callback);
 };
 
 //Update Object
 module.exports.updateObject = (id, data, callback) => {
-  Catalog.findById(id, (err, obj) => {
+  TypeMaterial.findById(id, (err, obj) => {
     if(!obj){
-      return next(new Error("Could not load Catalog to update"))
+      return next(new Error("Could not load TypeMaterial to update"))
     }else{
-      obj.nameCatalog = data.nameCatalog;
-      obj.dataCatalog = data.dataCatalog;
+      obj.type = data.type;
+      obj.description = data.description;
 
       obj.save(callback);
     }

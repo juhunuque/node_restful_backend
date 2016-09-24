@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
   },
   createdDt:{
     type: Date,
-    default: ''
+    default: Date.now
   },
   roles:{
     type: String,
@@ -61,8 +61,6 @@ module.exports.updateObject = (id, data, callback) => {
       return next(new Error("Could not load Catalog to update"))
     }else{
       obj.username = data.username;
-      obj.password = data.password;
-      obj.createdDt = data.createdDt;
       obj.roles = data.roles;
       obj.name = data.name;
       obj.lastname = data.lastname;
