@@ -70,3 +70,16 @@ module.exports.updateObject = (id, data, callback) => {
     }
   });
 };
+
+//Restart password
+module.exports.updatePwd = (id, data, callback) => {
+  User.findById(id, (err, obj) => {
+    if(!obj){
+      return next(new Error("Could not load Catalog to update"))
+    }else{
+      obj.password = data.password;
+
+      obj.save(callback);
+    }
+  });
+};

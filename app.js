@@ -32,6 +32,7 @@ const catalog = require('./routes/catalog.route');
 const user = require('./routes/user.route');
 const material = require('./routes/material.route');
 const project = require('./routes/project.route');
+const security = require('./routes/security.route');
 
 var app = express();
 
@@ -126,6 +127,7 @@ app.use('/v1/catalog', catalog);
 app.use('/v1/user', user);
 app.use('/v1/material', material);
 app.use('/v1/project', project);
+app.use('/v1/security', security);
 
 
 // catch 404 and forward to error handler

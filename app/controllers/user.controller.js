@@ -67,6 +67,7 @@ module.exports.updateObject = (req, res, next) => {
 
   Model.updateObject(req.params.id, data, (err, object)=>{
     if(err){return next(err);}
+    if(!object){return next(new CustomError('User invalid!', 400));}
 
     res.status(200).json(object);
   })
