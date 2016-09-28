@@ -1,8 +1,9 @@
 'use strict';
-const router = require('express').Router();
+let router = require('express').Router();
 const controller = require('./../app/controllers/security.controller');
 
-router.get('/:id', controller.restartUserPwd);
+router.get('/restart/:id', controller.restartUserPwd);
 router.post('/:id', controller.updateUserPwd);
+router.get('/backup', controller.backupDb);
 
 module.exports = router;
