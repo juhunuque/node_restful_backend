@@ -34,7 +34,8 @@ module.exports.createObject = (req, res, next) => {
     createdDt: req.body.createdDt,
     createdBy: req.body.createdBy,
     material: req.body.material,
-    status: req.body.status
+    status: req.body.status,
+    quantity: req.body.quantity
   });
 
   Model.createObject(newObject, (err, object)=>{
@@ -61,10 +62,9 @@ module.exports.updateObject = (req, res, next) => {
   const data = {
     project: req.body.project,
     description: req.body.description,
-    createdDt: req.body.createdDt,
-    createdBy: req.body.createdBy,
     material: req.body.material,
-    status: req.body.status
+    status: req.body.status,
+    quantity: req.body.quantity
   };
 
   Model.updateObject(req.params.id, data, (err, object)=>{

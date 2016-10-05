@@ -25,6 +25,10 @@ const projectSchema = mongoose.Schema({
   status:{
     type: String,
     default: ''
+  },
+  quantity:{
+    type: Number,
+    default: 0
   }
 });
 
@@ -58,10 +62,9 @@ module.exports.updateObject = (id, data, callback) => {
     }else{
       obj.project = data.project;
       obj.description = data.description;
-      obj.createdDt = data.createdDt;
-      obj.createdBy = data.createdBy;
       obj.material = data.material;
       obj.status = data.status;
+      obj.quantity = data.quantity;
 
       obj.save(callback);
     }
