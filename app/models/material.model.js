@@ -67,3 +67,16 @@ module.exports.updateObject = (id, data, callback) => {
     }
   });
 };
+
+//Update Object
+module.exports.updateHoldQuantity = (id, data, callback) => {
+  Material.findById(id, (err, obj) => {
+    if(!obj){
+      return next(new Error("Could not load Catalog to update"))
+    }else{
+      obj.holdQty = obj.holdQty + data.holdQty;
+
+      obj.save(callback);
+    }
+  });
+};

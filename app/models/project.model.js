@@ -12,19 +12,19 @@ const projectSchema = mongoose.Schema({
   },
   createdDt:{
     type: Date,
-    default: ''
+    default: Date.now
   },
   createdBy:{
     type: String,
     default: ''
   },
   material:{
-    type: String,
+    type: Array,
     default: ''
   },
   status:{
     type: String,
-    default: ''
+    default: 'CREADO'
   },
   quantity:{
     type: Number,

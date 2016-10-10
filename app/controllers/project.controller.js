@@ -1,8 +1,9 @@
 'use strict';
 const Model = require('./../models/project.model');
+const Material = require('./../models/material.model');
 const CustomError = require('./../utils/custom-error');
 const mongoose = require('mongoose');
-
+// 190.113.126.150
 // Get All
 module.exports.getAll = (req, res, next) => {
   Model.getAll((err, objects)=>{
@@ -31,15 +32,20 @@ module.exports.createObject = (req, res, next) => {
   const newObject = new Model({
     project: req.body.project,
     description: req.body.description,
-    createdDt: req.body.createdDt,
     createdBy: req.body.createdBy,
     material: req.body.material,
-    status: req.body.status,
     quantity: req.body.quantity
   });
 
   Model.createObject(newObject, (err, object)=>{
     if(err){return next(err);}
+    newObject.material.map((obj,index)=>{
+      Material.updateHoldQuantity(obj.object._id, {
+        holdQty: parseInt(obj.quantity)
+      }, (err, object)=>{
+        if(err){return next(err);}
+      });
+    });
 
     res.status(200).json(object);
   });
