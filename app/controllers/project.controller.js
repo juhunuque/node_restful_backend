@@ -79,3 +79,16 @@ module.exports.updateObject = (req, res, next) => {
     res.status(200).json(object);
   })
 };
+
+// Update status
+module.exports.updateStatus = (req, res, next) => {
+  const data = {
+    status: req.body.status,
+  };
+
+  Model.updateStatus(req.params.id, data, (err, object)=>{
+    if(err){return next(err);}
+
+    res.status(200).json(object);
+  })
+};

@@ -12,4 +12,6 @@ router.delete('/:id', controller.removeObject);
 
 router.put('/:id', controller.updateObject);
 
+router.put('/status/:id', controller.updateStatus);
+
 module.exports = router;

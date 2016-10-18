@@ -70,3 +70,15 @@ module.exports.updateObject = (id, data, callback) => {
     }
   });
 };
+
+module.exports.updateStatus = (id, data, callback) => {
+  Project.findById(id, (err, obj) => {
+    if(!obj){
+      return next(new Error("Could not load Catalog to update"))
+    }else{
+      obj.status = data.status;
+
+      obj.save(callback);
+    }
+  });
+};
