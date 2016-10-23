@@ -15,8 +15,8 @@ const userSchema = mongoose.Schema({
     default: Date.now
   },
   roles:{
-    type: String,
-    default: ''
+    type: Array,
+    default: []
   },
   name:{
     type: String,

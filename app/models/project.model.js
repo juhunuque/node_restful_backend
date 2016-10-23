@@ -20,7 +20,7 @@ const projectSchema = mongoose.Schema({
   },
   material:{
     type: Array,
-    default: ''
+    default: []
   },
   status:{
     type: String,
