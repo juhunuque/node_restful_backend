@@ -10,6 +10,10 @@ const userSchema = mongoose.Schema({
     type: String,
     default: ''
   },
+  oldPassword:{
+    type: String,
+    default: ''
+  },
   createdDt:{
     type: Date,
     default: Date.now
@@ -76,12 +80,17 @@ module.exports.updateObject = (id, data, callback) => {
 };
 
 //Restart password
-module.exports.updatePwd = (id, data, callback) => {
+module.exports.updatePwd = (id, data, isChange, callback) => {
   User.findById(id, (err, obj) => {
     if(!obj){
       return next(new Error("Could not load Catalog to update"))
     }else{
-      obj.password = data.password;
+      if(isChange){
+        obj.oldPassword = data.password;
+        obj.password = data.password;
+      }else{
+        obj.password = data.password;
+      }
 
       obj.save(callback);
     }
