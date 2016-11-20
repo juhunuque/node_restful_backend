@@ -14,4 +14,6 @@ router.put('/:id', controller.updateObject);
 
 router.put('/status/:id', controller.updateStatus);
 
+router.get('/report/project', controller.reportProject);
+
 module.exports = router;

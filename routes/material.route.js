@@ -12,4 +12,6 @@ router.delete('/:id', controller.removeObject);
 
 router.put('/:id', controller.updateObject);
 
+router.get('/report/material', controller.reportMaterial);
+
 module.exports = router;

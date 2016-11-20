@@ -80,3 +80,11 @@ module.exports.updateHoldQuantity = (id, data, callback) => {
     }
   });
 };
+
+module.exports.fillReport = (data, callback) => {
+  if(!data.category || data.category == 'undefined'){
+    Material.find(callback).sort({_id: -1});
+  }else{
+    Material.find({'category': data.category}, callback).sort({_id: -1});
+  }
+}

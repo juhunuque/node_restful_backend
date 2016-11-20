@@ -12,4 +12,6 @@ router.delete('/:id', controller.removeObject);
 
 router.put('/:id', controller.updateObject);
 
+router.post('/login', controller.getOneByUser);
+
 module.exports = router;

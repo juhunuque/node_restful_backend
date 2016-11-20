@@ -26,6 +26,37 @@ module.exports.getOneById = (req, res, next) => {
   });
 };
 
+module.exports.getOneByUser = (req, res, next) => {
+  let statusCode = 200;
+  Model.getByUser(req.body.user,(err, object)=>{
+    if(err){return next(err);}
+    if(!object){return next(new CustomError('No data found', 400));}
+    if(object.password == ''){
+      res.status(210).json({
+        _id: object._id,
+        name: object.name,
+        lastname: object.lastname,
+        username: object.username,
+        roles: object.roles,
+        password: false
+      });
+    }
+    if(object.password != req.body.password){
+      return next(new CustomError('Bad Credentials', 401));
+    }else{
+      res.status(200).json({
+        _id: object._id,
+        name: object.name,
+        lastname: object.lastname,
+        username: object.username,
+        roles: object.roles,
+        password: true
+      });
+    }
+
+  });
+};
+
 // Create new object
 module.exports.createObject = (req, res, next) => {
   const newObject = new Model({

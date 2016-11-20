@@ -82,3 +82,11 @@ module.exports.updateStatus = (id, data, callback) => {
     }
   });
 };
+
+module.exports.fillReport = (data, callback) => {
+  if(data.fromDt && data.toDt){
+    Project.find({'createdDt': {'$gte': new Date(data.fromDt), '$lt': new Date(data.toDt)}}, callback).sort({_id: -1});
+  }else{
+    Project.find(callback).sort({_id: -1});
+  }
+}

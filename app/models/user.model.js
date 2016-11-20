@@ -44,6 +44,10 @@ module.exports.getById = (id, callback) => {
   User.findById(id, callback);
 };
 
+module.exports.getByUser = function(user, callback){
+  User.findOne({username: user, active: true}, callback);
+};
+
 //Add Object
 module.exports.createObject = (newObject, callback) => {
   newObject.save(callback);
