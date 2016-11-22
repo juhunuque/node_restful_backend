@@ -5,6 +5,18 @@ const CustomError = require('./../utils/custom-error');
 const mongoose = require('mongoose');
 const PdfPrinter = require('pdfmake/src/printer');
 const moment = require('moment');
+const _ = require('lodash');
+
+const fonts = {
+      Roboto: {
+          normal: './fonts/Roboto-Regular.ttf',
+          bold: './fonts/Roboto-Medium.ttf',
+          italics: './fonts/Roboto-Regular.ttf',
+          bolditalics: './fonts/Roboto-Regular.ttf',
+      }
+  };
+
+  const dateNow = moment().format('Do MMM YY, h:mm:ss a');
 
 // 190.113.126.150
 // Get All
@@ -102,30 +114,18 @@ module.exports.reportProject = (req, res, next)=>{
   res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
   res.setHeader('Content-type', 'application/pdf');
 
-  const dateNow = moment().format('Do MMM YY, h:mm:ss a');
-
-  var fonts = {
-        Roboto: {
-            normal: './fonts/Roboto-Regular.ttf',
-            bold: './fonts/Roboto-Medium.ttf',
-            italics: './fonts/Roboto-Regular.ttf',
-            bolditalics: './fonts/Roboto-Regular.ttf',
-        }
-    };
-
     const printer = new PdfPrinter(fonts);
+    let objectsArray = new Array();
+    objectsArray.push([{ text: 'Proyecto', style: 'tableHeader' },
+       { text: '# piezas', style: 'tableHeader' },
+       { text: 'Estado', style: 'tableHeader' },
+       { text: 'Creado en', style: 'tableHeader' },
+       { text: 'Creado por', style: 'tableHeader' }
+     ]);
 
     Model.fillReport({fromDt: req.query.fromDt, toDt: req.query.toDt},(err, objects)=>{
       if(err){return next(err);}
       if(!objects){return next(new CustomError('No data found',400));}
-
-      let objectsArray = new Array();
-      objectsArray.push([{ text: 'Proyecto', style: 'tableHeader' },
-         { text: '# piezas', style: 'tableHeader' },
-         { text: 'Estado', style: 'tableHeader' },
-         { text: 'Creado en', style: 'tableHeader' },
-         { text: 'Creado por', style: 'tableHeader' }
-       ]);
 
       objects.map((object, index)=>{
         objectsArray.push([
@@ -136,7 +136,6 @@ module.exports.reportProject = (req, res, next)=>{
             object.createdBy.toString()
           ]);
       })
-
 
       const dd = {
         content:[
@@ -178,4 +177,87 @@ module.exports.reportProject = (req, res, next)=>{
       pdfDoc.pipe(res);
       pdfDoc.end();
     });
+}
+
+module.exports.reportProjectById = (req, res, next) => {
+  var countRestock = 0;
+  let filename = 'projectRequirementsReport';
+  filename = encodeURIComponent(filename) + '.pdf';
+  res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
+  res.setHeader('Content-type', 'application/pdf');
+
+  const printer = new PdfPrinter(fonts);
+  let objectsArray = new Array();
+  objectsArray.push([{ text: 'Material', style: 'tableHeader' },
+     { text: 'Cantidad necesaria', style: 'tableHeader' },
+     { text: 'Cantidad en stock', style: 'tableHeader' },
+     { text: 'Por reabastecer', style: 'tableHeader' }
+   ]);
+
+  Material.getAll((err, materials)=>{
+
+    Model.getById(req.query.id,(err, object)=>{
+
+      object.material.map((objectMaterial, index)=>{
+        let restock = 0;
+        let materialStock = _.find(materials, (o)=>{
+          return o.name == objectMaterial.object.name;
+        })
+
+        if(materialStock.quantity<(objectMaterial.quantity*object.quantity)){
+          countRestock++;
+          restock = (objectMaterial.quantity*object.quantity)-materialStock.quantity;
+        }
+
+        objectsArray.push([
+            objectMaterial.object.name.toString(),
+            (objectMaterial.quantity*object.quantity).toString(),
+            materialStock.quantity.toString(),
+            restock.toString()
+          ]);
+      });
+
+      const dd = {
+        content:[
+          { text: 'Entre Hilos & Agujas', style: 'subheader',  },
+          { text: `Reporte de proyecto: ${object.project}`, style: 'header', alignment: 'center' },
+          { text: `Generado ${dateNow}`, style: 'subheader', color: '#666666', alignment: 'center' },
+          { text: `Generado por: ${req.query.username}`, style: 'subheader', color: '#666666', alignment: 'center' },
+          { text: countRestock>0 ? 'Se necesitan reabastecer los siguientes materiales para iniciar el proyecto:'
+          :`El proyecto esta listo para comenzar.`, style: 'subheader' },
+          {
+                style: 'tableExample',
+                table: {
+                    body: objectsArray
+                },
+                layout: 'lightHorizontalLines'
+            }
+        ],
+        styles: {
+          header: {
+            fontSize: 18,
+            bold: true,
+            margin: [0, 0, 0, 10]
+          },
+          subheader: {
+            fontSize: 16,
+            bold: true,
+            margin: [0, 10, 0, 5]
+          },
+          tableExample: {
+            margin: [0, 5, 0, 15]
+          },
+          tableHeader: {
+            bold: true,
+            fontSize: 13,
+            color: 'black'
+          }
+        }
+      }
+
+      const pdfDoc = printer.createPdfKitDocument(dd);
+      pdfDoc.pipe(res);
+      pdfDoc.end();
+    });
+  })
 }

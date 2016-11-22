@@ -16,4 +16,6 @@ router.put('/status/:id', controller.updateStatus);
 
 router.get('/report/project', controller.reportProject);
 
+router.get('/report/requirements', controller.reportProjectById);
+
 module.exports = router;
