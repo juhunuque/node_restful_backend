@@ -158,5 +158,6 @@ app.use(function(err, req, res, next) {
   res.json({message: err.message, error: {}});
 });
 
+require('./app/utils/init');
 
 module.exports = app;
