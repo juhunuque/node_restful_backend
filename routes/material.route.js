@@ -14,4 +14,6 @@ router.put('/:id', controller.updateObject);
 
 router.get('/report/material', controller.reportMaterial);
 
+router.get('/report/restock', controller.reportMaterialReStock);
+
 module.exports = router;

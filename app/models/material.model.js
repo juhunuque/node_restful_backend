@@ -81,10 +81,26 @@ module.exports.updateHoldQuantity = (id, data, callback) => {
   });
 };
 
+module.exports.updateQuantity = (id, data, callback) => {
+  Material.findById(id, (err, obj) => {
+    if(!obj){
+      return next(new Error("Could not load Catalog to update"))
+    }else{
+      obj.quantity = obj.quantity - data.qty < 0 ? 0 : obj.quantity - data.qty;
+
+      obj.save(callback);
+    }
+  });
+};
+
 module.exports.fillReport = (data, callback) => {
   if(!data.category || data.category == 'undefined'){
     Material.find(callback).sort({_id: -1});
   }else{
     Material.find({'category': data.category}, callback).sort({_id: -1});
   }
+}
+
+module.exports.fillReportReStock = (data, callback) => {
+  Material.find({quantity: parseInt(data.quantity)}, callback).sort({_id: -1});
 }

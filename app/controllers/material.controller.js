@@ -158,3 +158,86 @@ module.exports.reportMaterial = (req, res, next)=>{
       pdfDoc.end();
     });
 }
+
+module.exports.reportMaterialReStock = (req, res, next)=>{
+  let filename = 'materialReportReStock';
+  filename = encodeURIComponent(filename) + '.pdf';
+  res.setHeader('Content-disposition', 'attachment; filename="' + filename + '"');
+  res.setHeader('Content-type', 'application/pdf');
+
+  const dateNow = moment().format('Do MMM YY, h:mm:ss a');
+
+  var fonts = {
+        Roboto: {
+            normal: './fonts/Roboto-Regular.ttf',
+            bold: './fonts/Roboto-Medium.ttf',
+            italics: './fonts/Roboto-Regular.ttf',
+            bolditalics: './fonts/Roboto-Regular.ttf',
+        }
+    };
+
+    const printer = new PdfPrinter(fonts);
+
+    Model.fillReportReStock({quantity: req.query.quantity}, (err, objects)=>{
+      if(err){return next(err);}
+      if(!objects){return next(new CustomError('No data found',400));}
+
+      let objectsArray = new Array();
+      objectsArray.push([{ text: 'Material', style: 'tableHeader' },
+         { text: 'Disponible', style: 'tableHeader' },
+         { text: 'En espera', style: 'tableHeader' },
+         { text: 'Categoria', style: 'tableHeader' },
+         { text: 'Medida', style: 'tableHeader' }
+       ]);
+
+      objects.map((object, index)=>{
+        objectsArray.push([object.name.toString(),
+            object.quantity.toString(),
+            object.holdQty.toString(),
+            object.category.toString(),
+            object.measure.toString()
+          ]);
+      })
+
+
+      const dd = {
+        content:[
+          { text: 'Entre Hilos & Agujas', style: 'subheader',  },
+          { text: 'Reporte de materiales por reestablecer', style: 'header', alignment: 'center' },
+          { text: 'Generado ' + dateNow, style: 'subheader', color: '#666666', alignment: 'center' },
+          { text: 'Generado por: ' + req.query.username, style: 'subheader', color: '#666666', alignment: 'center' },
+          {
+    						style: 'tableExample',
+    						table: {
+                    body: objectsArray
+    						},
+                layout: 'lightHorizontalLines'
+    				}
+        ],
+        styles: {
+      		header: {
+      			fontSize: 18,
+      			bold: true,
+      			margin: [0, 0, 0, 10]
+      		},
+      		subheader: {
+      			fontSize: 16,
+      			bold: true,
+      			margin: [0, 10, 0, 5]
+      		},
+      		tableExample: {
+      			margin: [0, 5, 0, 15]
+      		},
+      		tableHeader: {
+      			bold: true,
+      			fontSize: 13,
+      			color: 'black'
+      		}
+      	}
+      }
+
+      const pdfDoc = printer.createPdfKitDocument(dd);
+      pdfDoc.pipe(res);
+      pdfDoc.end();
+    });
+}

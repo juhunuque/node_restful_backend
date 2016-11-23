@@ -104,6 +104,16 @@ module.exports.updateStatus = (req, res, next) => {
   Model.updateStatus(req.params.id, data, (err, object)=>{
     if(err){return next(err);}
 
+    if(data.status == 'FINALIZADO'){
+      object.material.map((obj, index)=>{
+        Material.updateQuantity(obj.object._id,{qty:(parseInt(obj.quantity)*object.quantity)},
+        (err, object)=>{
+          if(err){return next(err);}
+        });
+
+      })
+    }
+
     res.status(200).json(object);
   })
 };
@@ -201,7 +211,7 @@ module.exports.reportProjectById = (req, res, next) => {
       object.material.map((objectMaterial, index)=>{
         let restock = 0;
         let materialStock = _.find(materials, (o)=>{
-          return o.name == objectMaterial.object.name;
+          return o._id == objectMaterial.object._id;
         })
 
         if(materialStock.quantity<(objectMaterial.quantity*object.quantity)){
